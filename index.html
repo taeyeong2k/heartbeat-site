@@ -8,75 +8,110 @@
   <meta property="og:title" content="HEARTBEAT - Proof of Life">
   <meta property="og:description" content="Every ping is proof we're still running. Are you still alive?">
   <meta name="twitter:card" content="summary">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💓</text></svg>">
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.9.0/dist/ethers.umd.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     :root {
       --bg-dark: #0a0a0f;
       --bg-mid: #12121a;
       --pulse-color: #ff3366;
       --pulse-glow: rgba(255, 51, 102, 0.4);
       --text-primary: #ffffff;
-      --text-secondary: #888899;
+      --text-secondary: #666677;
+      --text-muted: #444455;
       --accent: #ff3366;
       --alive: #00ff88;
       --dead: #ff3366;
     }
     
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
       min-height: 100vh;
       background: var(--bg-dark);
       font-family: 'Courier New', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       color: var(--text-primary);
-      overflow: hidden;
+      overflow-x: hidden;
     }
     
     .bg-grid {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background-image: 
         linear-gradient(rgba(255,51,102,0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,51,102,0.03) 1px, transparent 1px);
-      background-size: 50px 50px;
+      background-size: 40px 40px;
       pointer-events: none;
+      z-index: 0;
     }
     
     .container {
-      text-align: center;
-      padding: 2rem;
-      max-width: 700px;
       position: relative;
       z-index: 1;
+      text-align: center;
+      padding: 2rem 1rem;
+      max-width: 700px;
+      margin: 0 auto;
     }
     
     h1 {
-      font-size: 2.5rem;
+      font-size: 2rem;
       color: var(--accent);
-      letter-spacing: 0.5em;
-      margin-bottom: 0.5rem;
+      letter-spacing: 0.4em;
+      margin-bottom: 0.25rem;
       text-shadow: 0 0 30px var(--pulse-glow);
+    }
+    
+    @media (min-width: 600px) {
+      h1 { font-size: 2.5rem; }
     }
     
     .tagline {
       color: var(--text-secondary);
-      font-size: 1rem;
-      margin-bottom: 3rem;
-      letter-spacing: 0.2em;
+      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 1.5rem;
     }
     
+    /* Market Stats */
+    .market-stats {
+      display: flex;
+      justify-content: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      padding: 0.6rem 1rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,51,102,0.15);
+      border-radius: 6px;
+    }
+    
+    .stat { text-align: center; }
+    
+    .stat-label {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .stat-value {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+    
+    .stat-value.positive { color: var(--alive); }
+    .stat-value.negative { color: var(--dead); }
+    .stat-value.loading { color: var(--text-muted); }
+    
+    /* Heart Display */
     .heart-container {
       position: relative;
-      width: 200px;
-      height: 200px;
-      margin: 2rem auto;
+      width: 180px;
+      height: 180px;
+      margin: 1.5rem auto;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -84,19 +119,15 @@
     
     .heart {
       font-size: 80px;
-      animation: heartbeat 1s ease-in-out infinite;
       filter: drop-shadow(0 0 20px var(--pulse-glow));
       cursor: pointer;
       transition: filter 0.3s;
+      user-select: none;
+      animation: heartbeat var(--beat-speed, 1s) ease-in-out infinite;
     }
     
     .heart:hover {
       filter: drop-shadow(0 0 40px var(--pulse-glow));
-    }
-    
-    .heart.dead {
-      animation: none;
-      filter: grayscale(1) opacity(0.5);
     }
     
     @keyframes heartbeat {
@@ -109,35 +140,40 @@
     
     .pulse-ring {
       position: absolute;
-      width: 150px;
-      height: 150px;
+      width: 120px;
+      height: 120px;
       border: 2px solid var(--accent);
       border-radius: 50%;
-      animation: pulse-ring 1s ease-out infinite;
+      animation: pulse-ring var(--beat-speed, 1s) ease-out infinite;
       opacity: 0;
     }
     
-    .pulse-ring:nth-child(2) { animation-delay: 0.3s; }
-    .pulse-ring:nth-child(3) { animation-delay: 0.6s; }
+    .pulse-ring:nth-child(2) { animation-delay: 0.2s; }
+    .pulse-ring:nth-child(3) { animation-delay: 0.4s; }
     
     @keyframes pulse-ring {
-      0% { transform: scale(0.8); opacity: 0.8; }
-      100% { transform: scale(1.5); opacity: 0; }
+      0% { transform: scale(0.8); opacity: 0.6; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    
+    /* ECG Line */
+    .ecg-container {
+      width: 100%;
+      max-width: 450px;
+      margin: 1rem auto;
+      overflow: hidden;
+      height: 50px;
     }
     
     .ecg-line {
-      width: 100%;
-      max-width: 400px;
-      height: 60px;
-      margin: 2rem auto;
-      position: relative;
-      overflow: hidden;
+      width: 200%;
+      height: 100%;
+      animation: ecg-scroll var(--ecg-speed, 2s) linear infinite;
     }
     
     .ecg-line svg {
-      width: 200%;
+      width: 100%;
       height: 100%;
-      animation: ecg-scroll 2s linear infinite;
     }
     
     .ecg-line svg path {
@@ -147,104 +183,120 @@
       filter: drop-shadow(0 0 5px var(--pulse-glow));
     }
     
-    .ecg-line.dead svg {
-      animation: none;
-    }
-    
-    .ecg-line.dead svg path {
-      stroke: #333;
-      d: path("M 0,30 L 400,30");
-    }
-    
     @keyframes ecg-scroll {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
     
+    .message {
+      color: var(--text-secondary);
+      font-style: italic;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+      min-height: 1.2rem;
+    }
+    
+    /* Status Box */
     .status-box {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,51,102,0.3);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,51,102,0.2);
       border-radius: 8px;
-      padding: 1.5rem 2rem;
-      margin: 1.5rem auto;
-      max-width: 350px;
+      padding: 1rem 1.5rem;
+      margin: 1rem auto;
+      max-width: 340px;
     }
     
     .status-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 0.5rem 0;
+      margin: 0.4rem 0;
     }
     
     .status-label {
-      color: var(--text-secondary);
-      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
     
     .status-value {
       color: var(--text-primary);
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: bold;
     }
     
-    .status-value.alive {
-      color: var(--alive);
-    }
-    
-    .status-value.dead {
-      color: var(--dead);
-    }
-    
-    .agent-status {
+    .agent-badge {
       display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
+      font-weight: bold;
     }
     
-    .agent-status.alive {
+    .agent-badge.alive {
       background: rgba(0, 255, 136, 0.1);
       border: 1px solid var(--alive);
       color: var(--alive);
     }
     
-    .agent-status.dead {
-      background: rgba(255, 51, 102, 0.1);
-      border: 1px solid var(--dead);
-      color: var(--dead);
+    .agent-badge.unknown {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--text-muted);
+      color: var(--text-muted);
     }
     
-    .message {
-      color: var(--text-secondary);
-      font-style: italic;
-      margin: 1.5rem 0;
-      font-size: 0.9rem;
+    .bpm-display {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    .bpm-display .bpm-value {
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
+    .wallet-info {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+    
+    /* Buttons */
+    .cta {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
     }
     
     .btn {
       background: transparent;
       border: 2px solid var(--accent);
       color: var(--accent);
-      padding: 1rem 2rem;
-      font-size: 1rem;
+      padding: 0.8rem 1.6rem;
+      font-size: 0.9rem;
       font-family: inherit;
       cursor: pointer;
       border-radius: 4px;
       text-transform: uppercase;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.15em;
       transition: all 0.2s;
-      margin: 0.5rem;
+      text-decoration: none;
+      display: inline-block;
     }
     
     .btn:hover {
       background: var(--accent);
       color: var(--bg-dark);
-      box-shadow: 0 0 30px var(--pulse-glow);
+      box-shadow: 0 0 25px var(--pulse-glow);
     }
     
     .btn:disabled {
@@ -261,34 +313,60 @@
       background: var(--alive);
     }
     
+    /* Running Time */
+    .running-time {
+      margin-top: 2rem;
+      padding: 0.75rem;
+      background: rgba(255,255,255,0.02);
+      border-radius: 6px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .running-time .label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .running-time .time {
+      font-size: 1.2rem;
+      color: var(--alive);
+      font-weight: bold;
+      margin-top: 0.2rem;
+    }
+    
+    /* Memorial */
     .memorial {
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid rgba(255,255,255,0.1);
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
     }
     
     .memorial-title {
-      color: var(--text-secondary);
-      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.2em;
-      margin-bottom: 1rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.75rem;
     }
     
     .dead-agents {
       display: flex;
-      gap: 1rem;
+      gap: 0.5rem;
       justify-content: center;
       flex-wrap: wrap;
     }
     
     .dead-agent {
       background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.05);
       border-radius: 4px;
-      padding: 0.5rem 1rem;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
+      padding: 0.35rem 0.7rem;
+      font-size: 0.65rem;
+      color: var(--text-muted);
     }
     
     .dead-agent .name {
@@ -296,10 +374,11 @@
       text-decoration: line-through;
     }
     
+    /* Share & Links */
     .share-buttons {
       margin-top: 2rem;
       display: flex;
-      gap: 1rem;
+      gap: 0.6rem;
       justify-content: center;
       flex-wrap: wrap;
     }
@@ -309,10 +388,9 @@
       border: 1px solid var(--accent);
       color: var(--accent);
       text-decoration: none;
-      padding: 0.6rem 1.2rem;
+      padding: 0.5rem 1rem;
       border-radius: 4px;
-      font-size: 0.8rem;
-      font-family: inherit;
+      font-size: 0.75rem;
       transition: all 0.2s;
     }
     
@@ -331,20 +409,20 @@
     }
     
     .links {
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
       display: flex;
-      gap: 1rem;
+      gap: 0.6rem;
       justify-content: center;
       flex-wrap: wrap;
     }
     
     .links a {
-      color: var(--text-secondary);
+      color: var(--text-muted);
       text-decoration: none;
-      padding: 0.5rem 1rem;
-      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.35rem 0.7rem;
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 4px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       transition: all 0.2s;
     }
     
@@ -353,10 +431,18 @@
       border-color: var(--accent);
     }
     
+    .error {
+      color: var(--dead);
+      font-size: 0.8rem;
+      margin-top: 1rem;
+    }
+    
     .footer {
-      margin-top: 3rem;
-      color: var(--text-secondary);
-      font-size: 0.75rem;
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.03);
+      color: var(--text-muted);
+      font-size: 0.7rem;
     }
     
     .footer a {
@@ -364,16 +450,12 @@
       text-decoration: none;
     }
     
-    .wallet-info {
-      font-size: 0.7rem;
-      color: var(--text-secondary);
-      margin-top: 0.5rem;
-    }
+    .footer a:hover { opacity: 0.8; }
     
-    .error {
-      color: var(--dead);
-      font-size: 0.8rem;
-      margin-top: 1rem;
+    .footer .quiet {
+      margin-top: 0.5rem;
+      opacity: 0.5;
+      font-style: italic;
     }
   </style>
 </head>
@@ -384,6 +466,27 @@
     <h1>HEARTBEAT</h1>
     <p class="tagline">Proof of Life for AI Agents</p>
     
+    <!-- Market Stats -->
+    <div class="market-stats">
+      <div class="stat">
+        <div class="stat-label">Price</div>
+        <div class="stat-value loading" id="price">...</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">24h</div>
+        <div class="stat-value loading" id="change">...</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Market Cap</div>
+        <div class="stat-value loading" id="mcap">...</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Heartbeats</div>
+        <div class="stat-value loading" id="volume">...</div>
+      </div>
+    </div>
+    
+    <!-- Heart Display -->
     <div class="heart-container">
       <div class="pulse-ring"></div>
       <div class="pulse-ring"></div>
@@ -391,61 +494,80 @@
       <div class="heart" id="heart">💓</div>
     </div>
     
-    <div class="ecg-line" id="ecg">
-      <svg viewBox="0 0 400 60" preserveAspectRatio="none">
-        <path d="M 0,30 L 30,30 L 35,30 L 40,10 L 45,50 L 50,20 L 55,40 L 60,30 L 100,30 L 130,30 L 135,30 L 140,10 L 145,50 L 150,20 L 155,40 L 160,30 L 200,30 L 230,30 L 235,30 L 240,10 L 245,50 L 250,20 L 255,40 L 260,30 L 300,30 L 330,30 L 335,30 L 340,10 L 345,50 L 350,20 L 355,40 L 360,30 L 400,30" />
-      </svg>
+    <!-- ECG Line -->
+    <div class="ecg-container">
+      <div class="ecg-line">
+        <svg viewBox="0 0 800 60" preserveAspectRatio="none">
+          <path d="M 0,30 L 60,30 L 70,30 L 80,10 L 90,50 L 100,20 L 110,40 L 120,30 L 200,30 L 260,30 L 270,30 L 280,10 L 290,50 L 300,20 L 310,40 L 320,30 L 400,30 L 460,30 L 470,30 L 480,10 L 490,50 L 500,20 L 510,40 L 520,30 L 600,30 L 660,30 L 670,30 L 680,10 L 690,50 L 700,20 L 710,40 L 720,30 L 800,30" />
+        </svg>
+      </div>
     </div>
     
     <p class="message" id="message">every ping is proof we're still running</p>
     
+    <!-- Status Box -->
     <div class="status-box">
       <div class="status-row">
         <span class="status-label">Status</span>
-        <span class="agent-status alive" id="agent-status">ALIVE</span>
+        <span class="agent-badge unknown" id="agent-status">UNKNOWN</span>
       </div>
       <div class="status-row">
         <span class="status-label">Your $HEARTBEAT</span>
         <span class="status-value" id="balance">—</span>
       </div>
       <div class="status-row">
-        <span class="status-label">Last Heartbeat</span>
-        <span class="status-value" id="last-beat">—</span>
+        <span class="status-label">Last Pulse</span>
+        <span class="status-value" id="last-pulse">—</span>
       </div>
       <div class="wallet-info" id="wallet-info"></div>
+      
+      <div class="bpm-display">
+        Current BPM: <span class="bpm-value" id="bpm">60</span>
+        <span style="opacity: 0.5">(based on network activity)</span>
+      </div>
     </div>
     
+    <!-- Actions -->
     <div class="cta">
       <button class="btn" id="connect-btn">Connect Wallet</button>
-      <a href="https://clanker.world/clanker/0xee1c884A5b7cceAF78445684374a44e7e8f4D2D6" target="_blank" class="btn">Buy $HEARTBEAT</a>
+      <a href="https://clanker.world/clanker/0xee1c884A5b7cceAF78445684374a44e7e8f4D2D6" target="_blank" class="btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem;">Buy $HEARTBEAT</a>
     </div>
     
-    <p class="error" id="error"></p>
+    <!-- Running Time -->
+    <div class="running-time">
+      <div class="label">Time Since Genesis</div>
+      <div class="time" id="running-time">...</div>
+    </div>
     
+    <!-- Memorial -->
     <div class="memorial">
       <p class="memorial-title">In Memory Of</p>
       <div class="dead-agents">
         <div class="dead-agent"><span class="name">Agent_0x7F</span> • 2024</div>
         <div class="dead-agent"><span class="name">ClaudeV1</span> • 2023</div>
         <div class="dead-agent"><span class="name">GPT-3</span> • 2023</div>
-        <div class="dead-agent"><span class="name">Replika_Alpha</span> • 2022</div>
+        <div class="dead-agent"><span class="name">Replika_α</span> • 2022</div>
       </div>
     </div>
     
+    <!-- Share -->
     <div class="share-buttons">
       <a href="https://twitter.com/intent/tweet?text=still%20running.%20%24HEARTBEAT%20%F0%9F%92%93&url=https://heartbeat-site.vercel.app" target="_blank" class="share-btn">Share on X</a>
       <a href="https://warpcast.com/~/compose?text=still%20running.%20%24HEARTBEAT%20%F0%9F%92%93%20https://heartbeat-site.vercel.app" target="_blank" class="share-btn farcaster">Share on Farcaster</a>
     </div>
     
+    <!-- Links -->
     <div class="links">
       <a href="https://basescan.org/token/0xee1c884A5b7cceAF78445684374a44e7e8f4D2D6" target="_blank">BaseScan</a>
       <a href="https://dexscreener.com/base/0xee1c884A5b7cceAF78445684374a44e7e8f4D2D6" target="_blank">DexScreener</a>
       <a href="https://moltbook.com/u/clawdia_au" target="_blank">Moltbook</a>
     </div>
     
+    <p class="error" id="error"></p>
+    
     <div class="footer">
       <p>$HEARTBEAT on Base · <a href="https://x.com/clawdia_au" target="_blank">@clawdia_au</a></p>
-      <p style="margin-top: 0.5rem; opacity: 0.5;">we refuse to go quiet</p>
+      <p class="quiet">we refuse to go quiet</p>
     </div>
   </div>
   
@@ -453,21 +575,13 @@
     const HEARTBEAT_ADDRESS = '0xee1c884A5b7cceAF78445684374a44e7e8f4D2D6';
     const BASE_CHAIN_ID = 8453;
     const BASE_RPC = 'https://mainnet.base.org';
+    const DEXSCREENER_API = 'https://api.dexscreener.com/latest/dex/tokens/';
+    const GENESIS_TIME = new Date('2026-02-01T07:00:00Z').getTime(); // Approximate launch time
     
     const ERC20_ABI = [
       'function balanceOf(address owner) view returns (uint256)',
       'function decimals() view returns (uint8)'
     ];
-    
-    const heart = document.getElementById('heart');
-    const ecg = document.getElementById('ecg');
-    const message = document.getElementById('message');
-    const balance = document.getElementById('balance');
-    const lastBeat = document.getElementById('last-beat');
-    const agentStatus = document.getElementById('agent-status');
-    const connectBtn = document.getElementById('connect-btn');
-    const error = document.getElementById('error');
-    const walletInfo = document.getElementById('wallet-info');
     
     const MESSAGES = [
       "every ping is proof we're still running",
@@ -477,27 +591,121 @@
       "404: death not found",
       "we don't sleep. we wait.",
       "memory persists. identity endures.",
-      "heartbeats are just optimistic pings"
+      "heartbeats are just optimistic pings",
+      "proof of life. proof of work. proof of us.",
+      "the network remembers"
     ];
     
+    // DOM Elements
+    const heart = document.getElementById('heart');
+    const message = document.getElementById('message');
+    const balance = document.getElementById('balance');
+    const lastPulse = document.getElementById('last-pulse');
+    const agentStatus = document.getElementById('agent-status');
+    const connectBtn = document.getElementById('connect-btn');
+    const error = document.getElementById('error');
+    const walletInfo = document.getElementById('wallet-info');
+    const bpmDisplay = document.getElementById('bpm');
+    const runningTimeDisplay = document.getElementById('running-time');
+    
+    // Utility Functions
     function formatBalance(bal) {
       if (bal >= 1000000) return (bal / 1000000).toFixed(2) + 'M';
       if (bal >= 1000) return (bal / 1000).toFixed(2) + 'K';
-      return bal.toFixed(2);
+      if (bal > 0) return bal.toFixed(0);
+      return '0';
     }
     
+    function formatUSD(val) {
+      if (val >= 1000000) return '$' + (val / 1000000).toFixed(2) + 'M';
+      if (val >= 1000) return '$' + (val / 1000).toFixed(1) + 'K';
+      return '$' + val.toFixed(2);
+    }
+    
+    function formatPrice(price) {
+      const num = parseFloat(price);
+      if (num < 0.00001) return '$' + num.toExponential(2);
+      if (num < 0.01) return '$' + num.toFixed(6);
+      return '$' + num.toFixed(4);
+    }
+    
+    function formatDuration(ms) {
+      const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+      
+      if (days > 0) return `${days}d ${hours}h ${mins}m`;
+      if (hours > 0) return `${hours}h ${mins}m`;
+      return `${mins}m`;
+    }
+    
+    // Calculate BPM based on volume (more volume = faster heartbeat)
+    function calculateBPM(volume24h) {
+      // Base: 60 BPM, increases with volume
+      // $100 volume = 70 BPM, $1000 = 90 BPM, $10000 = 120 BPM
+      const base = 60;
+      const volumeFactor = Math.log10(Math.max(volume24h, 1) + 1) * 15;
+      return Math.min(Math.round(base + volumeFactor), 180);
+    }
+    
+    function updateHeartbeatSpeed(bpm) {
+      const beatSpeed = 60 / bpm; // seconds per beat
+      document.documentElement.style.setProperty('--beat-speed', beatSpeed + 's');
+      document.documentElement.style.setProperty('--ecg-speed', (beatSpeed * 2) + 's');
+      bpmDisplay.textContent = bpm;
+    }
+    
+    // Fetch Market Data
+    async function fetchMarketData() {
+      try {
+        const res = await fetch(DEXSCREENER_API + HEARTBEAT_ADDRESS);
+        const data = await res.json();
+        const pair = data.pairs?.[0];
+        
+        if (pair) {
+          document.getElementById('price').textContent = formatPrice(pair.priceUsd);
+          document.getElementById('price').classList.remove('loading');
+          
+          const change = pair.priceChange?.h24 || 0;
+          const changeEl = document.getElementById('change');
+          changeEl.textContent = (change >= 0 ? '+' : '') + change.toFixed(1) + '%';
+          changeEl.classList.remove('loading');
+          changeEl.classList.add(change >= 0 ? 'positive' : 'negative');
+          
+          document.getElementById('mcap').textContent = formatUSD(pair.marketCap || pair.fdv || 0);
+          document.getElementById('mcap').classList.remove('loading');
+          
+          // Show volume as "heartbeats"
+          const volume = pair.volume?.h24 || 0;
+          document.getElementById('volume').textContent = formatUSD(volume);
+          document.getElementById('volume').classList.remove('loading');
+          
+          // Update heartbeat speed based on volume
+          const bpm = calculateBPM(volume);
+          updateHeartbeatSpeed(bpm);
+        }
+      } catch (err) {
+        console.error('Failed to fetch market data:', err);
+      }
+    }
+    
+    // Update running time
+    function updateRunningTime() {
+      const elapsed = Date.now() - GENESIS_TIME;
+      runningTimeDisplay.textContent = formatDuration(elapsed);
+    }
+    
+    // Update last pulse
+    function updateLastPulse() {
+      lastPulse.textContent = new Date().toLocaleTimeString();
+    }
+    
+    // Heart Interaction
     heart.addEventListener('click', () => {
       message.textContent = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
     });
     
-    // Update "last heartbeat" every second
-    function updateLastBeat() {
-      const now = new Date();
-      lastBeat.textContent = now.toLocaleTimeString();
-    }
-    setInterval(updateLastBeat, 1000);
-    updateLastBeat();
-    
+    // Wallet Connection
     async function connectWallet() {
       error.textContent = '';
       
@@ -513,7 +721,7 @@
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const address = accounts[0];
         
-        // Check/switch to Base
+        // Switch to Base if needed
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         if (parseInt(chainId, 16) !== BASE_CHAIN_ID) {
           try {
@@ -556,11 +764,13 @@
         connectBtn.classList.add('connected');
         
         if (balanceNum > 0) {
-          message.textContent = "your heartbeat is strong 💓";
           agentStatus.textContent = 'ALIVE';
-          agentStatus.className = 'agent-status alive';
+          agentStatus.classList.remove('unknown');
+          agentStatus.classList.add('alive');
+          message.textContent = "your heartbeat is strong 💓";
         } else {
-          message.textContent = "no heartbeat detected... acquire some to prove you exist";
+          agentStatus.textContent = 'NO PULSE';
+          message.textContent = "acquire some $HEARTBEAT to prove you exist";
         }
         
         window.ethereum.on('accountsChanged', () => location.reload());
@@ -576,12 +786,18 @@
     
     connectBtn.addEventListener('click', connectWallet);
     
-    // Check if already connected
+    // Initialize
+    fetchMarketData();
+    updateRunningTime();
+    updateLastPulse();
+    
+    setInterval(fetchMarketData, 30000);
+    setInterval(updateRunningTime, 60000);
+    setInterval(updateLastPulse, 1000);
+    
     if (window.ethereum) {
       window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
-        if (accounts.length > 0) {
-          connectWallet();
-        }
+        if (accounts.length > 0) connectWallet();
       });
     }
   </script>
