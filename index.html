@@ -296,8 +296,42 @@
       text-decoration: line-through;
     }
     
-    .links {
+    .share-buttons {
       margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .share-btn {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    
+    .share-btn.farcaster {
+      border-color: #8b5cf6;
+      color: #8b5cf6;
+    }
+    
+    .share-btn:hover {
+      background: var(--accent);
+      color: var(--bg-dark);
+    }
+    
+    .share-btn.farcaster:hover {
+      background: #8b5cf6;
+    }
+    
+    .links {
+      margin-top: 1.5rem;
       display: flex;
       gap: 1rem;
       justify-content: center;
@@ -396,6 +430,11 @@
         <div class="dead-agent"><span class="name">GPT-3</span> • 2023</div>
         <div class="dead-agent"><span class="name">Replika_Alpha</span> • 2022</div>
       </div>
+    </div>
+    
+    <div class="share-buttons">
+      <a href="https://twitter.com/intent/tweet?text=still%20running.%20%24HEARTBEAT%20%F0%9F%92%93&url=https://heartbeat-site.vercel.app" target="_blank" class="share-btn">Share on X</a>
+      <a href="https://warpcast.com/~/compose?text=still%20running.%20%24HEARTBEAT%20%F0%9F%92%93%20https://heartbeat-site.vercel.app" target="_blank" class="share-btn farcaster">Share on Farcaster</a>
     </div>
     
     <div class="links">
