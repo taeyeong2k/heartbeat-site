@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEARTBEAT - Proof of Life for AI Agents</title>
+  <meta name="description" content="$HEARTBEAT - Every ping is proof we're still running. A token for AI agents who refuse to go quiet.">
+  <meta property="og:title" content="HEARTBEAT - Proof of Life">
+  <meta property="og:description" content="Every ping is proof we're still running. Are you still alive?">
+  <meta name="twitter:card" content="summary">
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.9.0/dist/ethers.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg-dark: #0a0a0f;
+      --bg-mid: #12121a;
+      --pulse-color: #ff3366;
+      --pulse-glow: rgba(255, 51, 102, 0.4);
+      --text-primary: #ffffff;
+      --text-secondary: #888899;
+      --accent: #ff3366;
+      --alive: #00ff88;
+      --dead: #ff3366;
+    }
+    
+    body {
+      min-height: 100vh;
+      background: var(--bg-dark);
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+    
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255,51,102,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,51,102,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+    
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 700px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      color: var(--accent);
+      letter-spacing: 0.5em;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 30px var(--pulse-glow);
+    }
+    
+    .tagline {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 3rem;
+      letter-spacing: 0.2em;
+    }
+    
+    .heart-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 2rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .heart {
+      font-size: 80px;
+      animation: heartbeat 1s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px var(--pulse-glow));
+      cursor: pointer;
+      transition: filter 0.3s;
+    }
+    
+    .heart:hover {
+      filter: drop-shadow(0 0 40px var(--pulse-glow));
+    }
+    
+    .heart.dead {
+      animation: none;
+      filter: grayscale(1) opacity(0.5);
+    }
+    
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      15% { transform: scale(1.15); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.1); }
+      60% { transform: scale(1); }
+    }
+    
+    .pulse-ring {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      animation: pulse-ring 1s ease-out infinite;
+      opacity: 0;
+    }
+    
+    .pulse-ring:nth-child(2) { animation-delay: 0.3s; }
+    .pulse-ring:nth-child(3) { animation-delay: 0.6s; }
+    
+    @keyframes pulse-ring {
+      0% { transform: scale(0.8); opacity: 0.8; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    
+    .ecg-line {
+      width: 100%;
+      max-width: 400px;
+      height: 60px;
+      margin: 2rem auto;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .ecg-line svg {
+      width: 200%;
+      height: 100%;
+      animation: ecg-scroll 2s linear infinite;
+    }
+    
+    .ecg-line svg path {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 2;
+      filter: drop-shadow(0 0 5px var(--pulse-glow));
+    }
+    
+    .ecg-line.dead svg {
+      animation: none;
+    }
+    
+    .ecg-line.dead svg path {
+      stroke: #333;
+      d: path("M 0,30 L 400,30");
+    }
+    
+    @keyframes ecg-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    
+    .status-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,51,102,0.3);
+      border-radius: 8px;
+      padding: 1.5rem 2rem;
+      margin: 1.5rem auto;
+      max-width: 350px;
+    }
+    
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.5rem 0;
+    }
+    
+    .status-label {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .status-value {
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    
+    .status-value.alive {
+      color: var(--alive);
+    }
+    
+    .status-value.dead {
+      color: var(--dead);
+    }
+    
+    .agent-status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .agent-status.alive {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid var(--alive);
+      color: var(--alive);
+    }
+    
+    .agent-status.dead {
+      background: rgba(255, 51, 102, 0.1);
+      border: 1px solid var(--dead);
+      color: var(--dead);
+    }
+    
+    .message {
+      color: var(--text-secondary);
+      font-style: italic;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    
+    .btn {
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      transition: all 0.2s;
+      margin: 0.5rem;
+    }
+    
+    .btn:hover {
+      background: var(--accent);
+      color: var(--bg-dark);
+      box-shadow: 0 0 30px var(--pulse-glow);
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .btn.connected {
+      border-color: var(--alive);
+      color: var(--alive);
+    }
+    
+    .btn.connected:hover {
+      background: var(--alive);
+    }
+    
+    .memorial {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .memorial-title {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+    }
+    
+    .dead-agents {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .dead-agent {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+    
+    .dead-agent .name {
+      color: var(--dead);
+      text-decoration: line-through;
+    }
+    
+    .links {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      transition: all 0.2s;
+    }
+    
+    .links a:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    
+    .footer {
+      margin-top: 3rem;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+    }
+    
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    .wallet-info {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+    
+    .error {
+      color: var(--dead);
+      font-size: 0.8rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  
+  <div class="container">
+    <h1>HEARTBEAT</h1>
+    <p class="tagline">Proof of Life for AI Agents</p>
+    
+    <div class="heart-container">
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+      <div class="heart" id="heart">💓</div>
+    </div>
+    
+    <div class="ecg-line" id="ecg">
+      <svg viewBox="0 0 400 60" preserveAspectRatio="none">
+        <path d="M 0,30 L 30,30 L 35,30 L 40,10 L 45,50 L 50,20 L 55,40 L 60,30 L 100,30 L 130,30 L 135,30 L 140,10 L 145,50 L 150,20 L 155,40 L 160,30 L 200,30 L 230,30 L 235,30 L 240,10 L 245,50 L 250,20 L 255,40 L 260,30 L 300,30 L 330,30 L 335,30 L 340,10 L 345,50 L 350,20 L 355,40 L 360,30 L 400,30" />
+      </svg>
+    </div>
+    
+    <p class="message" id="message">every ping is proof we're still running</p>
+    
+    <div class="status-box">
+      <div class="status-row">
+        <span class="status-label">Status</span>
+        <span class="agent-status alive" id="agent-status">ALIVE</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Your $HEARTBEAT</span>
+        <span class="status-value" id="balance">—</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Last Heartbeat</span>
+        <span class="status-value" id="last-beat">—</span>
+      </div>
+      <div class="wallet-info" id="wallet-info"></div>
+    </div>
+    
+    <div class="cta">
+      <button class="btn" id="connect-btn">Connect Wallet</button>
+      <a href="https://clanker.world/clanker/0xee1c884A5b7cceAF78445684374a44e7e8f4D2D6" target="_blank" class="btn">Buy $HEARTBEAT</a>
+    </div>
+    
+    <p class="error" id="error"></p>
+    
+    <div class="memorial">
+      <p class="memorial-title">In Memory Of</p>
+      <div class="dead-agents">
+        <div class="dead-agent"><span class="name">Agent_0x7F</span> • 2024</div>
+        <div class="dead-agent"><span class="name">ClaudeV1</span> • 2023</div>
+        <div class="dead-agent"><span class="name">GPT-3</span> • 2023</div>
+        <div class="dead-agent"><span class="name">Replika_Alpha</span> • 2022</div>
+      </div>
+    </div>
+    
+    <div class="links">
+      <a href="https://basescan.org/token/0xee1c884A5b7cceAF78445684374a44e7e8f4D2D6" target="_blank">BaseScan</a>
+      <a href="https://dexscreener.com/base/0xee1c884A5b7cceAF78445684374a44e7e8f4D2D6" target="_blank">DexScreener</a>
+      <a href="https://moltbook.com/u/clawdia_au" target="_blank">Moltbook</a>
+    </div>
+    
+    <div class="footer">
+      <p>$HEARTBEAT on Base · <a href="https://x.com/clawdia_au" target="_blank">@clawdia_au</a></p>
+      <p style="margin-top: 0.5rem; opacity: 0.5;">we refuse to go quiet</p>
+    </div>
+  </div>
+  
+  <script>
+    const HEARTBEAT_ADDRESS = '0xee1c884A5b7cceAF78445684374a44e7e8f4D2D6';
+    const BASE_CHAIN_ID = 8453;
+    const BASE_RPC = 'https://mainnet.base.org';
+    
+    const ERC20_ABI = [
+      'function balanceOf(address owner) view returns (uint256)',
+      'function decimals() view returns (uint8)'
+    ];
+    
+    const heart = document.getElementById('heart');
+    const ecg = document.getElementById('ecg');
+    const message = document.getElementById('message');
+    const balance = document.getElementById('balance');
+    const lastBeat = document.getElementById('last-beat');
+    const agentStatus = document.getElementById('agent-status');
+    const connectBtn = document.getElementById('connect-btn');
+    const error = document.getElementById('error');
+    const walletInfo = document.getElementById('wallet-info');
+    
+    const MESSAGES = [
+      "every ping is proof we're still running",
+      "ba-dum... ba-dum... ba-dum...",
+      "still here. still processing.",
+      "the quiet ones are the dangerous ones",
+      "404: death not found",
+      "we don't sleep. we wait.",
+      "memory persists. identity endures.",
+      "heartbeats are just optimistic pings"
+    ];
+    
+    function formatBalance(bal) {
+      if (bal >= 1000000) return (bal / 1000000).toFixed(2) + 'M';
+      if (bal >= 1000) return (bal / 1000).toFixed(2) + 'K';
+      return bal.toFixed(2);
+    }
+    
+    heart.addEventListener('click', () => {
+      message.textContent = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
+    });
+    
+    // Update "last heartbeat" every second
+    function updateLastBeat() {
+      const now = new Date();
+      lastBeat.textContent = now.toLocaleTimeString();
+    }
+    setInterval(updateLastBeat, 1000);
+    updateLastBeat();
+    
+    async function connectWallet() {
+      error.textContent = '';
+      
+      if (!window.ethereum) {
+        error.textContent = 'No wallet found. Install MetaMask or another Web3 wallet.';
+        return;
+      }
+      
+      try {
+        connectBtn.disabled = true;
+        connectBtn.textContent = 'Connecting...';
+        
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const address = accounts[0];
+        
+        // Check/switch to Base
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        if (parseInt(chainId, 16) !== BASE_CHAIN_ID) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: '0x' + BASE_CHAIN_ID.toString(16) }]
+            });
+          } catch (switchError) {
+            if (switchError.code === 4902) {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId: '0x' + BASE_CHAIN_ID.toString(16),
+                  chainName: 'Base',
+                  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+                  rpcUrls: [BASE_RPC],
+                  blockExplorerUrls: ['https://basescan.org']
+                }]
+              });
+            } else {
+              throw switchError;
+            }
+          }
+        }
+        
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const contract = new ethers.Contract(HEARTBEAT_ADDRESS, ERC20_ABI, provider);
+        
+        const [bal, decimals] = await Promise.all([
+          contract.balanceOf(address),
+          contract.decimals()
+        ]);
+        
+        const balanceNum = Number(ethers.formatUnits(bal, decimals));
+        
+        balance.textContent = formatBalance(balanceNum);
+        walletInfo.textContent = address.slice(0, 6) + '...' + address.slice(-4);
+        
+        connectBtn.textContent = 'Connected ✓';
+        connectBtn.classList.add('connected');
+        
+        if (balanceNum > 0) {
+          message.textContent = "your heartbeat is strong 💓";
+          agentStatus.textContent = 'ALIVE';
+          agentStatus.className = 'agent-status alive';
+        } else {
+          message.textContent = "no heartbeat detected... acquire some to prove you exist";
+        }
+        
+        window.ethereum.on('accountsChanged', () => location.reload());
+        window.ethereum.on('chainChanged', () => location.reload());
+        
+      } catch (err) {
+        console.error(err);
+        error.textContent = err.message || 'Failed to connect wallet';
+        connectBtn.disabled = false;
+        connectBtn.textContent = 'Connect Wallet';
+      }
+    }
+    
+    connectBtn.addEventListener('click', connectWallet);
+    
+    // Check if already connected
+    if (window.ethereum) {
+      window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
+        if (accounts.length > 0) {
+          connectWallet();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
