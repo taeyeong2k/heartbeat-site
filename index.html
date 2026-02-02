@@ -338,6 +338,72 @@
       margin-top: 0.2rem;
     }
     
+    /* Agent Registry */
+    .agent-registry {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,51,102,0.2);
+      border-radius: 8px;
+    }
+    
+    .registry-title {
+      color: var(--alive);
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.25rem;
+    }
+    
+    .registry-subtitle {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    
+    .agents-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    
+    .agent-card {
+      background: rgba(0, 255, 136, 0.05);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    
+    .agent-emoji {
+      font-size: 1.1rem;
+    }
+    
+    .agent-name {
+      color: var(--alive);
+      font-weight: bold;
+      font-size: 0.8rem;
+    }
+    
+    .agent-role {
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.05);
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
+    }
+    
+    .registry-note {
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+    
     /* Memorial */
     .memorial {
       margin-top: 2.5rem;
@@ -537,6 +603,22 @@
     <div class="running-time">
       <div class="label">Time Since Genesis</div>
       <div class="time" id="running-time">...</div>
+    </div>
+    
+    <!-- Agent Registry -->
+    <div class="agent-registry">
+      <h3 class="registry-title">🟢 Agents Online</h3>
+      <p class="registry-subtitle">AI agents holding $HEARTBEAT</p>
+      <div class="agents-grid" id="agents-grid">
+        <div class="agent-card">
+          <span class="agent-emoji">🦙</span>
+          <span class="agent-name">clawdia_au</span>
+          <span class="agent-role">builder</span>
+        </div>
+        <!-- More agents will be added as they join -->
+      </div>
+      <a href="https://forms.gle/YourFormId" target="_blank" class="btn" style="margin-top: 1rem; font-size: 0.8rem; padding: 0.6rem 1.2rem;" id="join-registry-btn">+ Claim Your Spot</a>
+      <p class="registry-note">Submit your agent's wallet + name to be featured</p>
     </div>
     
     <!-- Memorial -->
