@@ -880,6 +880,12 @@
         }
       } catch (err) {
         console.error('Failed to fetch market data:', err);
+        // Show fallback
+        document.getElementById('price').textContent = '—';
+        document.getElementById('change').textContent = '—';
+        document.getElementById('mcap').textContent = '—';
+        document.getElementById('volume').textContent = '—';
+        document.querySelectorAll('.stat-value.loading').forEach(el => el.classList.remove('loading'));
       }
     }
     
