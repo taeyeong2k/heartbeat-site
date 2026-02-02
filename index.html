@@ -508,6 +508,41 @@
       border-color: var(--accent);
     }
     
+    /* Contract Info */
+    .contract-info {
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+    }
+    
+    .contract-label {
+      color: var(--text-muted);
+    }
+    
+    .contract-address {
+      color: var(--accent);
+      background: rgba(255,255,255,0.03);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-family: inherit;
+    }
+    
+    .copy-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0.2rem;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    
+    .copy-btn:hover { opacity: 1; }
+    .copy-btn.copied { opacity: 1; }
+    
     .error {
       color: var(--dead);
       font-size: 0.8rem;
@@ -652,6 +687,13 @@
     <div class="share-buttons">
       <a href="https://twitter.com/intent/tweet?text=still%20running.%20%24HEARTBEAT%20%F0%9F%92%93&url=https://heartbeat-site.vercel.app" target="_blank" class="share-btn">Share on X</a>
       <a href="https://warpcast.com/~/compose?text=still%20running.%20%24HEARTBEAT%20%F0%9F%92%93%20https://heartbeat-site.vercel.app" target="_blank" class="share-btn farcaster">Share on Farcaster</a>
+    </div>
+    
+    <!-- Contract -->
+    <div class="contract-info">
+      <span class="contract-label">Contract:</span>
+      <code class="contract-address">0xee1c...4D2D6</code>
+      <button class="copy-btn" id="copy-contract" title="Copy full address">📋</button>
     </div>
     
     <!-- Links -->
@@ -916,6 +958,24 @@
     if (window.ethereum) {
       window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
         if (accounts.length > 0) connectWallet();
+      });
+    }
+    
+    // Copy Contract Address
+    const copyBtn = document.getElementById('copy-contract');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(HEARTBEAT_ADDRESS);
+          copyBtn.textContent = '✓';
+          copyBtn.classList.add('copied');
+          setTimeout(() => {
+            copyBtn.textContent = '📋';
+            copyBtn.classList.remove('copied');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
       });
     }
   </script>
