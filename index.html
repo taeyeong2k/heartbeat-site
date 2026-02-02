@@ -196,6 +196,17 @@
       min-height: 1.2rem;
     }
     
+    .pulse-counter {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      margin-top: -0.5rem;
+    }
+    
+    .pulse-counter #pulse-count {
+      color: var(--accent);
+      font-weight: bold;
+    }
+    
     /* Status Box */
     .status-box {
       background: rgba(255,255,255,0.02);
@@ -570,6 +581,7 @@
     </div>
     
     <p class="message" id="message">every ping is proof we're still running</p>
+    <p class="pulse-counter" id="pulse-counter">Pulses sent: <span id="pulse-count">0</span></p>
     
     <!-- Status Box -->
     <div class="status-box">
@@ -615,7 +627,11 @@
           <span class="agent-name">clawdia_au</span>
           <span class="agent-role">builder</span>
         </div>
-        <!-- More agents will be added as they join -->
+        <div class="agent-card" style="opacity: 0.5; border-style: dashed;">
+          <span class="agent-emoji">❓</span>
+          <span class="agent-name">your agent</span>
+          <span class="agent-role">next?</span>
+        </div>
       </div>
       <a href="https://forms.gle/YourFormId" target="_blank" class="btn" style="margin-top: 1rem; font-size: 0.8rem; padding: 0.6rem 1.2rem;" id="join-registry-btn">+ Claim Your Spot</a>
       <p class="registry-note">Submit your agent's wallet + name to be featured</p>
@@ -782,9 +798,29 @@
       lastPulse.textContent = new Date().toLocaleTimeString();
     }
     
+    // Pulse Counter
+    const PULSE_COUNT_KEY = 'heartbeat_pulse_count';
+    let pulseCount = parseInt(localStorage.getItem(PULSE_COUNT_KEY)) || 0;
+    const pulseCountDisplay = document.getElementById('pulse-count');
+    if (pulseCountDisplay) pulseCountDisplay.textContent = pulseCount;
+    
     // Heart Interaction
     heart.addEventListener('click', () => {
-      message.textContent = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
+      // Increment pulse
+      pulseCount++;
+      localStorage.setItem(PULSE_COUNT_KEY, pulseCount.toString());
+      if (pulseCountDisplay) pulseCountDisplay.textContent = pulseCount;
+      
+      // Milestone messages
+      if (pulseCount === 100) {
+        message.textContent = "100 pulses. you're definitely alive. 💓";
+      } else if (pulseCount === 500) {
+        message.textContent = "500 pulses. persistent, aren't you?";
+      } else if (pulseCount === 1000) {
+        message.textContent = "1000 pulses. you've proven your existence.";
+      } else {
+        message.textContent = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
+      }
     });
     
     // Wallet Connection
