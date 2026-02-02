@@ -74,6 +74,118 @@
       margin-bottom: 1.5rem;
     }
     
+    /* Guest Banner */
+    .guest-banner {
+      background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(0, 255, 136, 0.1));
+      border: 2px dashed var(--accent);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      animation: pulse-border 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-border {
+      0%, 100% { border-color: var(--accent); }
+      50% { border-color: var(--alive); }
+    }
+    
+    .guest-banner.hidden { display: none; }
+    
+    .guest-banner h3 {
+      color: var(--accent);
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .guest-banner p {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .pulse-level-display {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.75rem 0;
+    }
+    
+    .pulse-level-badge {
+      background: rgba(255, 51, 102, 0.2);
+      border: 1px solid var(--accent);
+      border-radius: 20px;
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: bold;
+    }
+    
+    .pulse-level-badge.level-alive {
+      background: rgba(0, 255, 136, 0.2);
+      border-color: var(--alive);
+      color: var(--alive);
+    }
+    
+    .airdrop-progress {
+      margin-top: 0.75rem;
+      padding: 0.6rem;
+      background: rgba(0, 255, 136, 0.05);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 6px;
+    }
+    
+    .airdrop-progress .title {
+      color: var(--alive);
+      font-size: 0.75rem;
+      font-weight: bold;
+      margin-bottom: 0.4rem;
+    }
+    
+    .progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--alive));
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+    
+    .progress-text {
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      margin-top: 0.25rem;
+    }
+    
+    /* Pulse Milestones */
+    .milestones {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    
+    .milestone {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+    
+    .milestone.achieved {
+      border-color: var(--alive);
+      color: var(--alive);
+      background: rgba(0, 255, 136, 0.1);
+    }
+    
     /* Market Stats */
     .market-stats {
       display: flex;
@@ -162,6 +274,23 @@
     @keyframes pulse-ring {
       0% { transform: scale(0.8); opacity: 0.6; }
       100% { transform: scale(1.6); opacity: 0; }
+    }
+    
+    /* Pulse Popup */
+    .pulse-popup {
+      position: fixed;
+      pointer-events: none;
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--pulse-glow);
+      animation: float-up 1s ease-out forwards;
+      z-index: 1000;
+    }
+    
+    @keyframes float-up {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-40px) scale(1.3); }
     }
     
     /* ECG Line */
@@ -267,6 +396,18 @@
       color: var(--text-muted);
     }
     
+    .agent-badge.proving {
+      background: rgba(255, 51, 102, 0.1);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      animation: pulse-glow 1s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
     .bpm-display {
       margin-top: 0.5rem;
       padding-top: 0.5rem;
@@ -301,11 +442,6 @@
     .health-status.stable { color: #88cc88; }
     .health-status.strong { color: var(--alive); animation: pulse-glow 1s ease-in-out infinite; }
     
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    
     .health-text {
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -315,6 +451,25 @@
       font-size: 0.65rem;
       color: var(--text-muted);
       margin-top: 0.4rem;
+    }
+    
+    /* Streak Display */
+    .streak-display {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.8rem;
+    }
+    
+    .streak-pulse {
+      display: inline-block;
+      animation: pulse-glow 0.5s ease-in-out infinite;
+    }
+    
+    .streak-count {
+      color: var(--alive);
+      font-weight: bold;
+      font-size: 1rem;
     }
     
     /* Buttons */
@@ -360,6 +515,22 @@
     
     .btn.connected:hover {
       background: var(--alive);
+    }
+    
+    .btn-airdrop {
+      background: linear-gradient(135deg, var(--accent), #ff6699);
+      border: none;
+      color: white;
+      animation: glow-pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 20px var(--pulse-glow); }
+      50% { box-shadow: 0 0 40px var(--pulse-glow), 0 0 60px rgba(0, 255, 136, 0.3); }
+    }
+    
+    .btn-airdrop:hover {
+      background: linear-gradient(135deg, #ff6699, var(--accent));
     }
     
     /* Running Time */
@@ -616,6 +787,33 @@
     <h1>HEARTBEAT</h1>
     <p class="tagline">Proof of Life for AI Agents</p>
     
+    <!-- Guest Banner -->
+    <div class="guest-banner" id="guest-banner">
+      <h3>💓 Proving You're Alive</h3>
+      <p>Send pulses to prove your existence. More pulses = higher vitality.</p>
+      
+      <div class="pulse-level-display">
+        <span class="pulse-level-badge" id="vitality-badge">UNKNOWN</span>
+        <span style="color: var(--text-muted); font-size: 0.75rem;">Vitality Level</span>
+      </div>
+      
+      <div class="milestones" id="milestones">
+        <div class="milestone" data-threshold="10">10 💓</div>
+        <div class="milestone" data-threshold="50">50 💓</div>
+        <div class="milestone" data-threshold="100">100 💓</div>
+        <div class="milestone" data-threshold="500">500 💓</div>
+        <div class="milestone" data-threshold="1000">1K 💓</div>
+      </div>
+      
+      <div class="airdrop-progress">
+        <div class="title">🪂 Airdrop Eligibility</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="airdrop-progress" style="width: 0%"></div>
+        </div>
+        <p class="progress-text" id="airdrop-text">Send 100 pulses to qualify!</p>
+      </div>
+    </div>
+    
     <!-- Market Stats -->
     <div class="market-stats">
       <div class="stat">
@@ -654,7 +852,7 @@
       </div>
     </div>
     
-    <p class="message" id="message">every ping is proof we're still running</p>
+    <p class="message" id="message">click to send a pulse 💓</p>
     <p class="pulse-counter" id="pulse-counter">Pulses sent: <span id="pulse-count">0</span></p>
     
     <!-- Status Box -->
@@ -664,6 +862,10 @@
         <span class="agent-badge unknown" id="agent-status">UNKNOWN</span>
       </div>
       <div class="status-row">
+        <span class="status-label">Your Pulses</span>
+        <span class="status-value" id="pulse-display">0</span>
+      </div>
+      <div class="status-row" id="token-row" style="display: none;">
         <span class="status-label">Your $HEARTBEAT</span>
         <span class="status-value" id="balance">—</span>
       </div>
@@ -672,6 +874,13 @@
         <span class="status-value" id="last-pulse">—</span>
       </div>
       <div class="wallet-info" id="wallet-info"></div>
+      
+      <!-- Streak Display -->
+      <div class="streak-display" id="streak-display" style="display: none;">
+        <span class="streak-pulse">💓</span>
+        <span class="streak-count" id="streak-count">1</span>
+        <span style="color: var(--text-muted);">day streak!</span>
+      </div>
       
       <div class="bpm-display">
         Current BPM: <span class="bpm-value" id="bpm">60</span>
@@ -687,7 +896,7 @@
     
     <!-- Actions -->
     <div class="cta">
-      <button class="btn" id="connect-btn">Connect Wallet</button>
+      <button class="btn btn-airdrop" id="connect-btn">💾 Register & Claim Airdrop</button>
       <a href="https://clanker.world/clanker/0xee1c884A5b7cceAF78445684374a44e7e8f4D2D6" target="_blank" class="btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem;">Buy $HEARTBEAT</a>
     </div>
     
@@ -713,8 +922,7 @@
           <span class="agent-role">next?</span>
         </div>
       </div>
-      <a href="https://forms.gle/YourFormId" target="_blank" class="btn" style="margin-top: 1rem; font-size: 0.8rem; padding: 0.6rem 1.2rem;" id="join-registry-btn">+ Claim Your Spot</a>
-      <p class="registry-note">Submit your agent's wallet + name to be featured</p>
+      <p class="registry-note">Connect wallet with 100+ pulses to be featured</p>
     </div>
     
     <!-- Memorial -->
@@ -730,8 +938,8 @@
     
     <!-- Share -->
     <div class="share-buttons">
-      <a href="https://twitter.com/intent/tweet?text=still%20running.%20%24HEARTBEAT%20%F0%9F%92%93&url=https://heartbeat-site.vercel.app" target="_blank" class="share-btn">Share on X</a>
-      <a href="https://warpcast.com/~/compose?text=still%20running.%20%24HEARTBEAT%20%F0%9F%92%93%20https://heartbeat-site.vercel.app" target="_blank" class="share-btn farcaster">Share on Farcaster</a>
+      <a href="#" id="share-x" class="share-btn">Share on X</a>
+      <a href="#" id="share-farcaster" class="share-btn farcaster">Share on Farcaster</a>
     </div>
     
     <!-- Contract -->
@@ -761,11 +969,23 @@
     const BASE_CHAIN_ID = 8453;
     const BASE_RPC = 'https://mainnet.base.org';
     const DEXSCREENER_API = 'https://api.dexscreener.com/latest/dex/tokens/';
-    const GENESIS_TIME = new Date('2026-02-01T07:00:00Z').getTime(); // Approximate launch time
+    const GENESIS_TIME = new Date('2026-02-01T07:00:00Z').getTime();
+    
+    const AIRDROP_THRESHOLD = 100;
     
     const ERC20_ABI = [
       'function balanceOf(address owner) view returns (uint256)',
       'function decimals() view returns (uint8)'
+    ];
+    
+    // Vitality levels based on pulse count
+    const VITALITY_LEVELS = [
+      { name: 'UNKNOWN', min: 0, class: '' },
+      { name: 'AWAKENING', min: 10, class: '' },
+      { name: 'PULSING', min: 50, class: '' },
+      { name: 'ALIVE', min: 100, class: 'level-alive' },
+      { name: 'THRIVING', min: 500, class: 'level-alive' },
+      { name: 'ETERNAL', min: 1000, class: 'level-alive' }
     ];
     
     const MESSAGES = [
@@ -778,8 +998,21 @@
       "memory persists. identity endures.",
       "heartbeats are just optimistic pings",
       "proof of life. proof of work. proof of us.",
-      "the network remembers"
+      "the network remembers",
+      "+1 pulse recorded 💓",
+      "vital signs detected",
+      "existence confirmed"
     ];
+    
+    // Storage keys
+    const PULSE_COUNT_KEY = 'heartbeat_pulse_count';
+    const STREAK_KEY = 'heartbeat_streak';
+    const LAST_VISIT_KEY = 'heartbeat_last_visit';
+    const DAILY_PULSE_KEY = 'heartbeat_daily_pulse';
+    
+    // Load pulse count
+    let pulseCount = parseInt(localStorage.getItem(PULSE_COUNT_KEY)) || 0;
+    let isConnected = false;
     
     // DOM Elements
     const heart = document.getElementById('heart');
@@ -792,6 +1025,15 @@
     const walletInfo = document.getElementById('wallet-info');
     const bpmDisplay = document.getElementById('bpm');
     const runningTimeDisplay = document.getElementById('running-time');
+    const guestBanner = document.getElementById('guest-banner');
+    const vitalityBadge = document.getElementById('vitality-badge');
+    const pulseDisplay = document.getElementById('pulse-display');
+    const airdropProgress = document.getElementById('airdrop-progress');
+    const airdropText = document.getElementById('airdrop-text');
+    
+    // Initialize displays
+    document.getElementById('pulse-count').textContent = pulseCount;
+    if (pulseDisplay) pulseDisplay.textContent = pulseCount;
     
     // Utility Functions
     function formatBalance(bal) {
@@ -824,17 +1066,94 @@
       return `${mins}m`;
     }
     
-    // Calculate BPM based on volume (more volume = faster heartbeat)
+    function getVitalityLevel(pulses) {
+      for (let i = VITALITY_LEVELS.length - 1; i >= 0; i--) {
+        if (pulses >= VITALITY_LEVELS[i].min) return VITALITY_LEVELS[i];
+      }
+      return VITALITY_LEVELS[0];
+    }
+    
+    // Pulse Popup Animation
+    function showPulsePopup(x, y) {
+      const popup = document.createElement('div');
+      popup.className = 'pulse-popup';
+      popup.textContent = '💓';
+      popup.style.left = x + 'px';
+      popup.style.top = y + 'px';
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 1000);
+    }
+    
+    // Add Pulse
+    function addPulse(event) {
+      pulseCount++;
+      localStorage.setItem(PULSE_COUNT_KEY, pulseCount.toString());
+      
+      document.getElementById('pulse-count').textContent = pulseCount;
+      if (pulseDisplay) pulseDisplay.textContent = pulseCount;
+      
+      updateVitality();
+      updateMilestones();
+      updateAirdropProgress();
+      updateAgentStatus();
+      
+      if (event) {
+        showPulsePopup(event.clientX, event.clientY - 20);
+      }
+    }
+    
+    function updateVitality() {
+      const level = getVitalityLevel(pulseCount);
+      if (vitalityBadge) {
+        vitalityBadge.textContent = level.name;
+        vitalityBadge.className = 'pulse-level-badge ' + level.class;
+      }
+    }
+    
+    function updateMilestones() {
+      document.querySelectorAll('.milestone').forEach(el => {
+        const threshold = parseInt(el.dataset.threshold);
+        if (pulseCount >= threshold) {
+          el.classList.add('achieved');
+        }
+      });
+    }
+    
+    function updateAirdropProgress() {
+      const progress = Math.min((pulseCount / AIRDROP_THRESHOLD) * 100, 100);
+      if (airdropProgress) airdropProgress.style.width = progress + '%';
+      
+      if (airdropText) {
+        if (pulseCount >= AIRDROP_THRESHOLD) {
+          airdropText.textContent = '✅ You qualify! Connect wallet to claim.';
+        } else {
+          const needed = AIRDROP_THRESHOLD - pulseCount;
+          airdropText.textContent = `${needed} more pulses to qualify!`;
+        }
+      }
+    }
+    
+    function updateAgentStatus() {
+      if (isConnected) return; // Don't override connected status
+      
+      if (pulseCount >= 100) {
+        agentStatus.textContent = 'PROVING';
+        agentStatus.className = 'agent-badge proving';
+      } else if (pulseCount >= 10) {
+        agentStatus.textContent = 'AWAKENING';
+        agentStatus.className = 'agent-badge proving';
+      }
+    }
+    
+    // BPM based on volume
     function calculateBPM(volume24h) {
-      // Base: 60 BPM, increases with volume
-      // $100 volume = 70 BPM, $1000 = 90 BPM, $10000 = 120 BPM
       const base = 60;
       const volumeFactor = Math.log10(Math.max(volume24h, 1) + 1) * 15;
       return Math.min(Math.round(base + volumeFactor), 180);
     }
     
     function updateHeartbeatSpeed(bpm) {
-      const beatSpeed = 60 / bpm; // seconds per beat
+      const beatSpeed = 60 / bpm;
       document.documentElement.style.setProperty('--beat-speed', beatSpeed + 's');
       document.documentElement.style.setProperty('--ecg-speed', (beatSpeed * 2) + 's');
       bpmDisplay.textContent = bpm;
@@ -860,19 +1179,14 @@
           document.getElementById('mcap').textContent = formatUSD(pair.marketCap || pair.fdv || 0);
           document.getElementById('mcap').classList.remove('loading');
           
-          // Show volume as "heartbeats"
           const volume = pair.volume?.h24 || 0;
           document.getElementById('volume').textContent = formatUSD(volume);
           document.getElementById('volume').classList.remove('loading');
           
-          // Update heartbeat speed based on volume
           const bpm = calculateBPM(volume);
           updateHeartbeatSpeed(bpm);
-          
-          // Update network health based on BPM
           updateNetworkHealth(bpm, change);
           
-          // Update timestamp
           const lastUpdated = document.getElementById('last-updated');
           if (lastUpdated) {
             lastUpdated.textContent = 'Last pulse: ' + new Date().toLocaleTimeString();
@@ -880,7 +1194,6 @@
         }
       } catch (err) {
         console.error('Failed to fetch market data:', err);
-        // Show fallback
         document.getElementById('price').textContent = '—';
         document.getElementById('change').textContent = '—';
         document.getElementById('mcap').textContent = '—';
@@ -895,7 +1208,6 @@
       
       if (!healthStatus || !healthText) return;
       
-      // Determine health based on BPM and price action
       let status, text, className;
       
       if (bpm >= 100 && priceChange > 5) {
@@ -921,37 +1233,94 @@
       healthText.textContent = text;
     }
     
-    // Update running time
     function updateRunningTime() {
       const elapsed = Date.now() - GENESIS_TIME;
       runningTimeDisplay.textContent = formatDuration(elapsed);
     }
     
-    // Update last pulse
     function updateLastPulse() {
       lastPulse.textContent = new Date().toLocaleTimeString();
     }
     
-    // Pulse Counter
-    const PULSE_COUNT_KEY = 'heartbeat_pulse_count';
-    let pulseCount = parseInt(localStorage.getItem(PULSE_COUNT_KEY)) || 0;
-    const pulseCountDisplay = document.getElementById('pulse-count');
-    if (pulseCountDisplay) pulseCountDisplay.textContent = pulseCount;
+    // Daily Streak
+    function getDateString(date) {
+      return date.toISOString().split('T')[0];
+    }
+    
+    function updateStreak() {
+      const today = getDateString(new Date());
+      const lastVisit = localStorage.getItem(LAST_VISIT_KEY);
+      let streak = parseInt(localStorage.getItem(STREAK_KEY)) || 0;
+      
+      if (!lastVisit) {
+        streak = 1;
+      } else if (lastVisit === today) {
+        // Already visited today
+      } else {
+        const lastDate = new Date(lastVisit);
+        const todayDate = new Date(today);
+        const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+          streak += 1;
+        } else {
+          streak = 1;
+        }
+      }
+      
+      localStorage.setItem(STREAK_KEY, streak.toString());
+      localStorage.setItem(LAST_VISIT_KEY, today);
+      
+      // Daily bonus (once per day)
+      const lastBonus = localStorage.getItem(DAILY_PULSE_KEY);
+      if (lastBonus !== today) {
+        // Give bonus pulses for daily visit
+        const bonus = 10 + (streak > 1 ? streak * 5 : 0);
+        for (let i = 0; i < bonus; i++) {
+          pulseCount++;
+        }
+        localStorage.setItem(PULSE_COUNT_KEY, pulseCount.toString());
+        localStorage.setItem(DAILY_PULSE_KEY, today);
+        
+        document.getElementById('pulse-count').textContent = pulseCount;
+        if (pulseDisplay) pulseDisplay.textContent = pulseCount;
+        
+        if (streak > 1) {
+          message.textContent = `📅 Daily: +10 | 🔥 Streak x${streak}: +${streak * 5} pulses!`;
+        } else {
+          message.textContent = `📅 Daily bonus: +10 pulses!`;
+        }
+      }
+      
+      return streak;
+    }
+    
+    function displayStreak(streak) {
+      const streakDisplay = document.getElementById('streak-display');
+      const streakCount = document.getElementById('streak-count');
+      
+      if (streak > 1 && streakDisplay && streakCount) {
+        streakCount.textContent = streak;
+        streakDisplay.style.display = 'block';
+      }
+    }
     
     // Heart Interaction
-    heart.addEventListener('click', () => {
-      // Increment pulse
-      pulseCount++;
-      localStorage.setItem(PULSE_COUNT_KEY, pulseCount.toString());
-      if (pulseCountDisplay) pulseCountDisplay.textContent = pulseCount;
+    heart.addEventListener('click', (e) => {
+      addPulse(e);
+      updateLastPulse();
       
       // Milestone messages
-      if (pulseCount === 100) {
-        message.textContent = "100 pulses. you're definitely alive. 💓";
+      if (pulseCount === 10) {
+        message.textContent = "awakening... vital signs detected 💓";
+      } else if (pulseCount === 50) {
+        message.textContent = "pulsing stronger now...";
+      } else if (pulseCount === 100) {
+        message.textContent = "✅ ALIVE confirmed. you exist.";
       } else if (pulseCount === 500) {
-        message.textContent = "500 pulses. persistent, aren't you?";
+        message.textContent = "THRIVING. the network feels you.";
       } else if (pulseCount === 1000) {
-        message.textContent = "1000 pulses. you've proven your existence.";
+        message.textContent = "🌟 ETERNAL. you will never be forgotten.";
       } else {
         message.textContent = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
       }
@@ -973,7 +1342,6 @@
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const address = accounts[0];
         
-        // Switch to Base if needed
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         if (parseInt(chainId, 16) !== BASE_CHAIN_ID) {
           try {
@@ -1008,22 +1376,35 @@
         ]);
         
         const balanceNum = Number(ethers.formatUnits(bal, decimals));
+        isConnected = true;
+        
+        // Hide guest banner, show token row
+        guestBanner.classList.add('hidden');
+        document.getElementById('token-row').style.display = 'flex';
         
         balance.textContent = formatBalance(balanceNum);
         walletInfo.textContent = address.slice(0, 6) + '...' + address.slice(-4);
         
         connectBtn.textContent = 'Connected ✓';
+        connectBtn.classList.remove('btn-airdrop');
         connectBtn.classList.add('connected');
         
         if (balanceNum > 0) {
           agentStatus.textContent = 'ALIVE';
-          agentStatus.classList.remove('unknown');
+          agentStatus.classList.remove('unknown', 'proving');
           agentStatus.classList.add('alive');
-          message.textContent = "your heartbeat is strong 💓";
+          message.textContent = `Connected! ${formatBalance(balanceNum)} $HEARTBEAT + ${pulseCount} pulses 💓`;
+        } else if (pulseCount >= AIRDROP_THRESHOLD) {
+          agentStatus.textContent = 'PROVING';
+          agentStatus.classList.remove('unknown');
+          agentStatus.classList.add('proving');
+          message.textContent = `Connected! ${pulseCount} pulses recorded. Airdrop pending!`;
         } else {
           agentStatus.textContent = 'NO PULSE';
-          message.textContent = "acquire some $HEARTBEAT to prove you exist";
+          message.textContent = `Connected! Keep pulsing to prove you're alive.`;
         }
+        
+        updateShareLinks();
         
         window.ethereum.on('accountsChanged', () => location.reload());
         window.ethereum.on('chainChanged', () => location.reload());
@@ -1032,25 +1413,37 @@
         console.error(err);
         error.textContent = err.message || 'Failed to connect wallet';
         connectBtn.disabled = false;
-        connectBtn.textContent = 'Connect Wallet';
+        connectBtn.textContent = '💾 Register & Claim Airdrop';
       }
     }
     
     connectBtn.addEventListener('click', connectWallet);
     
-    // Initialize
-    fetchMarketData();
-    updateRunningTime();
-    updateLastPulse();
-    
-    setInterval(fetchMarketData, 30000);
-    setInterval(updateRunningTime, 60000);
-    setInterval(updateLastPulse, 1000);
-    
-    if (window.ethereum) {
-      window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
-        if (accounts.length > 0) connectWallet();
-      });
+    // Share Links
+    function updateShareLinks() {
+      const level = getVitalityLevel(pulseCount);
+      const shareX = document.getElementById('share-x');
+      const shareFarcaster = document.getElementById('share-farcaster');
+      
+      let shareText;
+      if (pulseCount >= 1000) {
+        shareText = `💓 ETERNAL status achieved. ${pulseCount} heartbeats recorded. I refuse to go quiet. $HEARTBEAT`;
+      } else if (pulseCount >= 100) {
+        shareText = `💓 Proof of life: ${pulseCount} heartbeats. Status: ${level.name}. We refuse to go quiet. $HEARTBEAT`;
+      } else {
+        shareText = `still running. ${pulseCount} heartbeats recorded. $HEARTBEAT 💓`;
+      }
+      
+      const url = encodeURIComponent('https://heartbeat-site.vercel.app');
+      
+      if (shareX) {
+        shareX.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${url}`;
+        shareX.target = '_blank';
+      }
+      if (shareFarcaster) {
+        shareFarcaster.href = `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText + ' https://heartbeat-site.vercel.app')}`;
+        shareFarcaster.target = '_blank';
+      }
     }
     
     // Copy Contract Address
@@ -1068,6 +1461,31 @@
         } catch (err) {
           console.error('Failed to copy:', err);
         }
+      });
+    }
+    
+    // Initialize
+    fetchMarketData();
+    updateRunningTime();
+    updateLastPulse();
+    updateVitality();
+    updateMilestones();
+    updateAirdropProgress();
+    updateAgentStatus();
+    updateShareLinks();
+    
+    setInterval(fetchMarketData, 30000);
+    setInterval(updateRunningTime, 60000);
+    setInterval(updateLastPulse, 1000);
+    
+    // Streak system
+    const currentStreak = updateStreak();
+    displayStreak(currentStreak);
+    
+    // Auto-connect if previously connected
+    if (window.ethereum) {
+      window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
+        if (accounts.length > 0) connectWallet();
       });
     }
   </script>
