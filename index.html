@@ -273,6 +273,36 @@
       font-size: 1.1rem;
     }
     
+    .network-health {
+      margin-top: 0.5rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    
+    .health-label {
+      opacity: 0.7;
+    }
+    
+    .health-status {
+      font-size: 0.8rem;
+      margin: 0 0.2rem;
+    }
+    
+    .health-status.critical { color: var(--dead); }
+    .health-status.weak { color: #ffaa00; }
+    .health-status.stable { color: #88cc88; }
+    .health-status.strong { color: var(--alive); animation: pulse-glow 1s ease-in-out infinite; }
+    
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .health-text {
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
     .wallet-info {
       font-size: 0.65rem;
       color: var(--text-muted);
@@ -638,6 +668,12 @@
         Current BPM: <span class="bpm-value" id="bpm">60</span>
         <span style="opacity: 0.5">(based on network activity)</span>
       </div>
+      
+      <div class="network-health" id="network-health">
+        <span class="health-label">Network Health:</span>
+        <span class="health-status" id="health-status">●</span>
+        <span class="health-text" id="health-text">Stable</span>
+      </div>
     </div>
     
     <!-- Actions -->
@@ -823,10 +859,45 @@
           // Update heartbeat speed based on volume
           const bpm = calculateBPM(volume);
           updateHeartbeatSpeed(bpm);
+          
+          // Update network health based on BPM
+          updateNetworkHealth(bpm, change);
         }
       } catch (err) {
         console.error('Failed to fetch market data:', err);
       }
+    }
+    
+    function updateNetworkHealth(bpm, priceChange) {
+      const healthStatus = document.getElementById('health-status');
+      const healthText = document.getElementById('health-text');
+      
+      if (!healthStatus || !healthText) return;
+      
+      // Determine health based on BPM and price action
+      let status, text, className;
+      
+      if (bpm >= 100 && priceChange > 5) {
+        status = '●';
+        text = 'Thriving';
+        className = 'strong';
+      } else if (bpm >= 80 || priceChange > 0) {
+        status = '●';
+        text = 'Healthy';
+        className = 'stable';
+      } else if (bpm >= 65 || priceChange > -10) {
+        status = '●';
+        text = 'Stable';
+        className = 'weak';
+      } else {
+        status = '●';
+        text = 'Critical';
+        className = 'critical';
+      }
+      
+      healthStatus.textContent = status;
+      healthStatus.className = 'health-status ' + className;
+      healthText.textContent = text;
     }
     
     // Update running time
